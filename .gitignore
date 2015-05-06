@@ -134,15 +134,6 @@ publish/
 *.pubxml
 *.publishproj
 
-# NuGet Packages
-*.nupkg
-# The packages folder can be ignored because of Package Restore
-**/packages/*
-# except build/, which is used as an MSBuild target.
-!**/packages/build/
-# Uncomment if necessary however generally it will be regenerated when needed
-#!**/packages/repositories.config
-
 # Windows Azure Build Output
 csx/
 *.build.csdef

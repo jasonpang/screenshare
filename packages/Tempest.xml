@@ -1,0 +1,1480 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Tempest</name>
+    </assembly>
+    <members>
+        <member name="T:Tempest.ISerializer`1">
+            <summary>
+            Contract for a type that serializes another type.
+            </summary>
+            <typeparam name="T">The type to serialize and deserialize.</typeparam>
+        </member>
+        <member name="M:Tempest.ISerializer`1.Serialize(Tempest.ISerializationContext,Tempest.IValueWriter,`0)">
+            <summary>
+            Serializes <paramref name="element"/> using <paramref name="writer"/>.
+            </summary>
+            <param name="context">The serialization context.</param>
+            <param name="writer">The writer to use to serialize.</param>
+            <param name="element">The element to serialize.</param>
+        </member>
+        <member name="M:Tempest.ISerializer`1.Deserialize(Tempest.ISerializationContext,Tempest.IValueReader)">
+            <summary>
+            Deserializes an element with <paramref name="reader"/>.
+            </summary>
+            <param name="context">The serialization context.</param>
+            <param name="reader">The reader to use to deserialize.</param>
+            <returns>The deserialized element.</returns>
+        </member>
+        <member name="T:Tempest.DisconnectedEventArgs">
+            <summary>
+            Holds event data for the <see cref="E:Tempest.IConnection.Disconnected"/> event.
+            </summary>
+        </member>
+        <member name="T:Tempest.ConnectionEventArgs">
+            <summary>
+            Holds event base data for various connection-based events.
+            </summary>
+        </member>
+        <member name="M:Tempest.ConnectionEventArgs.#ctor(Tempest.IConnection)">
+            <summary>
+            Creates a new instance of <see cref="T:Tempest.ConnectionEventArgs"/>.
+            </summary>
+            <param name="connection">The connection of the event.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="connection"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Tempest.ConnectionEventArgs.Connection">
+            <summary>
+            Gets the connection for the event.
+            </summary>
+        </member>
+        <member name="M:Tempest.DisconnectedEventArgs.#ctor(Tempest.IConnection,Tempest.ConnectionResult)">
+            <summary>
+            Creates a new instance of <see cref="T:Tempest.ConnectionEventArgs"/>.
+            </summary>
+            <param name="connection">The connection of the event.</param>
+            <param name="reason">Result for disconnection.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="connection"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:Tempest.ConnectionExtensions">
+            <summary>
+            Holds extension methods for <see cref="T:Tempest.IConnection"/>
+            </summary>
+        </member>
+        <member name="M:Tempest.ConnectionExtensions.Send(System.Collections.Generic.IEnumerable{Tempest.IConnection},Tempest.Message)">
+            <summary>
+            Sends a message to all of the connections.
+            </summary>
+            <param name="connections">The connections to send to.</param>
+            <param name="msg">The message to send.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <para><paramref name="connections"/> is <c>null</c>.</para><para>--or--</para>
+            <para><paramref name="msg"/> is <c>null</c>.</para>
+            </exception>
+        </member>
+        <member name="T:Tempest.IListener">
+            <summary>
+            Contract for a listener.
+            </summary>
+            <see cref="T:Tempest.IConnectionProvider"/>
+            <see cref="T:Tempest.IConnectionlessMessenger"/>
+        </member>
+        <member name="M:Tempest.IListener.Start(Tempest.MessageTypes)">
+            <summary>
+            Starts the listener.
+            </summary>
+            <param name="types">The message types to accept.</param>
+            <seealso cref="M:Tempest.IListener.Stop"/>
+        </member>
+        <member name="M:Tempest.IListener.Stop">
+            <summary>
+            Stops the listener.
+            </summary>
+            <seealso cref="M:Tempest.IListener.Start(Tempest.MessageTypes)"/>
+        </member>
+        <member name="P:Tempest.IListener.IsRunning">
+            <summary>
+            Gets whether this listener is currently running or not.
+            </summary>
+            <seealso cref="M:Tempest.IListener.Start(Tempest.MessageTypes)"/>
+            <seealso cref="M:Tempest.IListener.Stop"/>
+        </member>
+        <member name="P:Tempest.IListener.LocalTargets">
+            <summary>
+            Gets the local targets being listened to. Empty until started.
+            </summary>
+        </member>
+        <member name="M:Tempest.IConnectionlessMessenger.SendConnectionlessMessageAsync(Tempest.Message,Tempest.Target)">
+            <summary>
+            Sends a connectionless <paramref name="message"/> to <paramref name="target"/>.
+            </summary>
+            <param name="message">The message to send.</param>
+            <param name="target">The target to send the message to.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> or <paramref name="target"/> is <c>null</c>.</exception>
+        </member>
+        <member name="E:Tempest.IConnectionlessMessenger.ConnectionlessMessageReceived">
+            <summary>
+            A connectionless message was received.
+            </summary>
+        </member>
+        <member name="T:Tempest.InternalProtocol.TempestMessage">
+            <summary>
+            Base class for all internal Tempest protocol messages.
+            </summary>
+        </member>
+        <member name="M:Tempest.Message.WritePayload(Tempest.ISerializationContext,Tempest.IValueWriter)">
+            <summary>
+            Writes the message payload with <paramref name="writer"/>.
+            </summary>
+            <param name="context"></param>
+            <param name="writer">The writer to use for writing the payload.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="writer"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.Message.ReadPayload(Tempest.ISerializationContext,Tempest.IValueReader)">
+            <summary>
+            Reads the message payload with <paramref name="reader"/>.
+            </summary>
+            <param name="context"></param>
+            <param name="reader">The reader to use for reading the payload.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="reader"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Tempest.Message.MustBeReliable">
+            <summary>
+            Gets whether this message must be reliably delivered or not.
+            </summary>
+        </member>
+        <member name="P:Tempest.Message.PreferReliable">
+            <summary>
+            Gets whether this message prefers reliable delivery if possible.
+            </summary>
+        </member>
+        <member name="P:Tempest.Message.AcceptedConnectionlessly">
+            <summary>
+            Gets whether this message can be received without forming a connection.
+            </summary>
+        </member>
+        <member name="P:Tempest.Message.Authenticated">
+            <summary>
+            Gets whether this message is hashed and signed.
+            </summary>
+        </member>
+        <member name="P:Tempest.Message.Encrypted">
+            <summary>
+            Gets whether this message is encrypted.
+            </summary>
+        </member>
+        <member name="P:Tempest.Message.Protocol">
+            <summary>
+            Gets the protocol this message belongs to.
+            </summary>
+        </member>
+        <member name="P:Tempest.Message.MessageType">
+            <summary>
+            Gets the unique identifier for this message within its protocol.
+            </summary>
+        </member>
+        <member name="P:Tempest.Message.Header">
+            <summary>
+            Gets or sets information about the message for provider implementations.
+            </summary>
+        </member>
+        <member name="M:Tempest.IContext.LockHandlers">
+            <summary>
+            Permanently locks handler registration to improve read performance.
+            </summary>
+            <remarks>
+            <para>
+            This locks handler registration so that no new handlers can registered, improving scalability by
+            removing locks around message handler storage. This can not be undone.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Tempest.IContext.RegisterConnectionlessMessageHandler(Tempest.Protocol,System.UInt16,System.Action{Tempest.ConnectionlessMessageEventArgs})">
+            <summary>
+            Registers a connectionless message handler.
+            </summary>
+            <param name="protocol">The protocol of the <paramref name="messageType"/>.</param>
+            <param name="messageType">The message type to register a handler for.</param>
+            <param name="handler">The handler to register for the message type.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <para><paramref name="protocol"/> is <c>null</c>.</para>
+            <para>-- or --</para>
+            <para><paramref name="handler"/> is <c>null</c>.</para>
+            </exception>
+            <exception cref="T:System.InvalidOperationException">Handler registration is locked by <see cref="M:Tempest.IContext.LockHandlers"/>.</exception>
+        </member>
+        <member name="M:Tempest.IContext.RegisterMessageHandler(Tempest.Protocol,System.UInt16,System.Action{Tempest.MessageEventArgs})">
+            <summary>
+            Registers a message handler.
+            </summary>
+            <param name="protocol">The protocol of the <paramref name="messageType"/>.</param>
+            <param name="messageType">The message type to register a handler for.</param>
+            <param name="handler">The handler to register for the message type.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <para><paramref name="protocol"/> is <c>null</c>.</para>
+            <para>-- or --</para>
+            <para><paramref name="handler"/> is <c>null</c>.</para>
+            </exception>
+            <exception cref="T:System.InvalidOperationException">Handler registration is locked by <see cref="M:Tempest.IContext.LockHandlers"/>.</exception>
+        </member>
+        <member name="P:Tempest.IClientContext.Connection">
+            <summary>
+            Gets the client connection.
+            </summary>
+        </member>
+        <member name="P:Tempest.InternalProtocol.ConnectMessage.SignatureHashAlgorithms">
+            <summary>
+            Gets or sets the hashing algorithms available for signing.
+            </summary>
+        </member>
+        <member name="P:Tempest.InternalProtocol.ConnectMessage.Protocols">
+            <summary>
+            Gets or sets the protocols (and versions of protocols) to connect for.
+            </summary>
+        </member>
+        <member name="T:Tempest.InternalProtocol.DisconnectMessage">
+            <summary>
+            Internal Tempest protocol disconnect with reason message.
+            </summary>
+        </member>
+        <member name="M:Tempest.InternalProtocol.DisconnectMessage.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Tempest.InternalProtocol.DisconnectMessage"/>.
+            </summary>
+        </member>
+        <member name="P:Tempest.InternalProtocol.DisconnectMessage.Reason">
+            <summary>
+            Gets or sets the reason for disconnection.
+            </summary>
+        </member>
+        <member name="P:Tempest.InternalProtocol.DisconnectMessage.CustomReason">
+            <summary>
+            Gets or sets a custom reason for disconnection.
+            </summary>
+        </member>
+        <member name="P:Tempest.InternalProtocol.FinalConnectMessage.PublicAuthenticationKey">
+            <summary>
+            Gets or sets the public authentication key.
+            </summary>
+        </member>
+        <member name="T:Tempest.InternalProtocol.PongMessage">
+            <summary>
+            Internal Tempest protocol pong message.
+            </summary>
+        </member>
+        <member name="T:Tempest.ISerializable">
+            <summary>
+            Contract representing a type that can serialize and deserialize itself.
+            </summary>
+        </member>
+        <member name="M:Tempest.ISerializable.Serialize(Tempest.ISerializationContext,Tempest.IValueWriter)">
+            <summary>
+            Serializes the instance to the <paramref name="writer"/>.
+            </summary>
+            <param name="context">The serialization context.</param>
+            <param name="writer">The <see cref="T:Tempest.IValueWriter"/> to serialize with.</param>
+        </member>
+        <member name="M:Tempest.ISerializable.Deserialize(Tempest.ISerializationContext,Tempest.IValueReader)">
+            <summary>
+            Deserializes the instance from the <paramref name="reader"/>.
+            </summary>
+            <param name="context">The serialization context.</param>
+            <param name="reader">The <see cref="T:Tempest.IValueReader"/> to deserialize with.</param>
+        </member>
+        <member name="T:Tempest.ISerializationContext">
+            <summary>
+            Contract representing the context for a given serialization.
+            </summary>
+            <seealso cref="T:Tempest.ISerializer"/>
+        </member>
+        <member name="P:Tempest.ISerializationContext.Connection">
+            <summary>
+            Gets the connection for this serialization.
+            </summary>
+        </member>
+        <member name="P:Tempest.ISerializationContext.Protocols">
+            <summary>
+            Gets the protocols being used in this connection.
+            </summary>
+            <remarks>
+            These protocols represent the agreed upon version of the protocols
+            by the client and the server. You can use the version of each protocol to
+            conditionally serialize to support multiple versions of the protocol.
+            </remarks>
+        </member>
+        <member name="T:Tempest.ISerializer">
+            <summary>
+            Contract for a type that serializes another type.
+            </summary>
+        </member>
+        <member name="M:Tempest.ISerializer.Serialize(Tempest.ISerializationContext,Tempest.IValueWriter,System.Object)">
+            <summary>
+            Serializes <paramref name="element"/> using <paramref name="writer"/>.
+            </summary>
+            <param name="context">The serialization context.</param>
+            <param name="writer">The writer to use to serialize.</param>
+            <param name="element">The element to serialize.</param>
+        </member>
+        <member name="M:Tempest.ISerializer.Deserialize(Tempest.ISerializationContext,Tempest.IValueReader)">
+            <summary>
+            Deserializes an element with <paramref name="reader"/>.
+            </summary>
+            <param name="context">The serialization context.</param>
+            <param name="reader">The reader to use to deserialize.</param>
+            <returns>The deserialized element.</returns>
+        </member>
+        <member name="T:Tempest.IServerContext">
+            <summary>
+            Contract for server contexts.
+            </summary>
+        </member>
+        <member name="E:Tempest.IServerContext.ConnectionMade">
+            <summary>
+            Raised when a connection is made.
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.Empty">
+            <summary>
+            Default state
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.Protocol">
+            <summary>
+            The protocol identifier
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.CID">
+            <summary>
+            The connection ID
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.Type">
+            <summary>
+            The message type
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.Length">
+            <summary>
+            The message length
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.IV">
+            <summary>
+            The encryption initialization vector
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.MessageId">
+            <summary>
+            The message ID
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.ResponseMessageId">
+            <summary>
+            The message ID of a message being responded to.
+            </summary>
+        </member>
+        <member name="F:Tempest.HeaderState.Complete">
+            <summary>
+            The header has been completely read.
+            </summary>
+        </member>
+        <member name="P:Tempest.MessageHeader.MessageLength">
+            <summary>
+            Gets the total length of the message (including <see cref="P:Tempest.MessageHeader.HeaderLength"/>).
+            </summary>
+        </member>
+        <member name="P:Tempest.MessageHeader.IsResponse">
+            <summary>
+            Gets whether the message is a response to another message or not.
+            </summary>
+        </member>
+        <member name="P:Tempest.MessageHeader.ResponseMessageId">
+            <summary>
+            Gets or sets the message being responded to
+            </summary>
+        </member>
+        <member name="M:Tempest.MessageResponseManager.CheckTimeouts">
+            <summary>
+            Checks for any message responses that have timed out and cancels them.
+            </summary>
+        </member>
+        <member name="T:Tempest.InternalProtocol.PingMessage">
+            <summary>
+            Internal Tempest protocol ping message.
+            </summary>
+        </member>
+        <member name="P:Tempest.InternalProtocol.PingMessage.Interval">
+            <summary>
+            Gets or sets the ping interval.
+            </summary>
+        </member>
+        <member name="M:Tempest.Providers.Network.BufferPool.TryGetBuffer(System.Net.Sockets.SocketAsyncEventArgs@)">
+            <summary>
+            Tries to retrieve an existing buffer.
+            </summary>
+            <param name="args">The retrieved or created <see cref="T:System.Net.Sockets.SocketAsyncEventArgs"/>.</param>
+            <returns><c>true</c> if the buffer was pre-existing, <c>false</c> if it was newly created.</returns>
+        </member>
+        <member name="T:Tempest.IConnection">
+            <summary>
+            Base connection contract.
+            </summary>
+        </member>
+        <member name="M:Tempest.IConnection.SendAsync(Tempest.Message)">
+            <summary>
+            Queues a message to send to this connection.
+            </summary>
+            <param name="message">The message to send.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
+            <returns>Whether or not the message was sent.</returns>
+            <remarks>
+            The returned future will complete when the underlying connection has completed sending the message,
+            not when the other end has received it. In some cases, if you're sending while disconnecting, the
+            message may fail to send in which case the future's result will be <c>false</c>.
+            </remarks>
+        </member>
+        <member name="M:Tempest.IConnection.SendFor(Tempest.Message,System.Int32)">
+            <summary>
+            Sends a <paramref name="message"/> on this connection and returns a <see cref="T:System.Threading.Tasks.Task`1"/> for the direct response to this <paramref name="message"/>.
+            </summary>
+            <param name="message">The message to send.</param>
+            <param name="responseTimeout">A timeout for the resposne in milliseconds.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
+            <seealso cref="M:Tempest.IConnection.SendResponseAsync(Tempest.Message,Tempest.Message)"/>
+            <remarks>
+            In some cases, such as sending a message while disconnecting, the message may fail to send
+            in which case the future's result will be <c>null</c>.
+            </remarks>
+        </member>
+        <member name="M:Tempest.IConnection.SendFor``1(Tempest.Message,System.Int32)">
+            <summary>
+            Sends a <paramref name="message"/> on this connection and returns a <see cref="T:System.Threading.Tasks.Task`1"/> for the direct response to this <paramref name="message"/>.
+            </summary>
+            <typeparam name="TResponse">The type of message being expected in response.</typeparam>
+            <param name="message">The message to send.</param>
+            <param name="responseTimeout">A timeout for the response in milliseconds.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task`1"/> for the direct response to <paramref name="message"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> is <c>null</c>.</exception>
+            <seealso cref="M:Tempest.IConnection.SendResponseAsync(Tempest.Message,Tempest.Message)"/>
+            <remarks>
+            In some cases, such as sending a message while disconnecting, the message may fail to send
+            in which case the future's result will be <c>null</c>.
+            </remarks>
+        </member>
+        <member name="M:Tempest.IConnection.SendResponseAsync(Tempest.Message,Tempest.Message)">
+            <summary>
+            Sends a <paramref name="response"/> to <paramref name="originalMessage"/>.
+            </summary>
+            <param name="originalMessage"></param>
+            <param name="response"></param>
+            <exception cref="T:System.ArgumentNullException">
+            <para><paramref name="originalMessage"/> is <c>null</c>.</para>
+            <para>-- or --</para>
+            <para><paramref name="response"/> is <c>null</c>.</para>
+            </exception>
+            <exception cref="T:System.ArgumentException"><paramref name="originalMessage"/>'s <see cref="!:Message.IsResponse"/> is <c>true</c>.</exception>
+            <seealso cref="M:Tempest.IConnection.SendFor``1(Tempest.Message,System.Int32)"/>
+            <remarks>
+            The returned future will complete when the underlying connection has completed sending the message,
+            not when the other end has received it. In some cases, if you're sending while disconnecting, the
+            message may fail to send in which case the future's result will be <c>false</c>.
+            </remarks>
+        </member>
+        <member name="M:Tempest.IConnection.DisconnectAsync">
+            <summary>
+            Asynchronously closes the connection.
+            </summary>
+        </member>
+        <member name="M:Tempest.IConnection.DisconnectAsync(Tempest.ConnectionResult,System.String)">
+            <summary>
+            Asynchronously closes the connection.
+            </summary>
+            <param name="reason">Reason for the disconnection.</param>
+            <param name="customReason">A custom reason, if any.</param>
+            <exception cref="T:System.ArgumentNullException">
+            If <paramref name="reason"/> == <see cref="F:Tempest.ConnectionResult.Custom"/> and <paramref name="customReason"/> is <c>null</c>.
+            </exception>
+        </member>
+        <member name="P:Tempest.IConnection.IsConnected">
+            <summary>
+            Gets whether the connection is alive or not.
+            </summary>
+        </member>
+        <member name="P:Tempest.IConnection.ConnectionId">
+            <summary>
+            Gets the server-assigned connection id.
+            </summary>
+        </member>
+        <member name="P:Tempest.IConnection.Protocols">
+            <summary>
+            Gets the protocols the connection has enabled/negotiated.
+            </summary>
+        </member>
+        <member name="P:Tempest.IConnection.RemoteTarget">
+            <summary>
+            Gets the remote target for this connection.
+            </summary>
+        </member>
+        <member name="P:Tempest.IConnection.RemoteKey">
+            <summary>
+            Gets the remote authentication key for this connection.
+            </summary>
+            <remarks><c>null</c> if the transport did not handshake.</remarks>
+        </member>
+        <member name="P:Tempest.IConnection.LocalKey">
+            <summary>
+            Gets the local authentication key for this connection.
+            </summary>
+            <remarks><c>null</c> if the transport did not handshake.</remarks>
+        </member>
+        <member name="P:Tempest.IConnection.ResponseTime">
+            <summary>
+            Gets the response time in milliseconds for the connection. -1 if unsupported.
+            </summary>
+        </member>
+        <member name="E:Tempest.IConnection.MessageReceived">
+            <summary>
+            A message was received on the transport.
+            </summary>
+            <exception cref="T:System.NotSupportedException"><see cref="!:Modes"/> is not <see cref="!:MessagingModes.Async"/>.</exception>
+        </member>
+        <member name="E:Tempest.IConnection.Disconnected">
+            <summary>
+            The connection was lost.
+            </summary>
+        </member>
+        <member name="M:Tempest.IClientConnection.ConnectAsync(Tempest.Target,Tempest.MessageTypes)">
+            <summary>
+            Attempts to asynchronously connect to the <paramref name="target"/> for <paramref name="messageTypes"/>.
+            </summary>
+            <param name="target">The target to connect to.</param>
+            <param name="messageTypes">The type of messages to connect for.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="target"/> is <c>null</c>.</exception>
+        </member>
+        <member name="E:Tempest.IClientConnection.Connected">
+            <summary>
+            Raised when the connection has connected.
+            </summary>
+        </member>
+        <member name="T:Tempest.IConnectionProvider">
+            <summary>
+            Contract for a provider of connections.
+            </summary>
+        </member>
+        <member name="E:Tempest.IConnectionProvider.ConnectionMade">
+            <summary>
+            A new connection was made.
+            </summary>
+        </member>
+        <member name="T:Tempest.Protocol">
+            <summary>
+            Identifies a messaging protocol.
+            </summary>
+            <remarks>
+            Multiple Tempest-build libraries and applications can run on a single
+            set of connection provider and connections. Protocols are used to
+            identify the various sets of messages so that the correct handlers
+            receive the correct messages.
+            </remarks>
+        </member>
+        <member name="M:Tempest.MessageFactory.Discover(System.Reflection.Assembly)">
+            <summary>
+            Discovers and registers message types from <paramref name="assembly"/>.
+            </summary>
+            <param name="assembly">The assembly to discover message types from.</param>
+            <seealso cref="M:Tempest.MessageFactory.Discover"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="assembly"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.MessageFactory.Discover">
+            <summary>
+            Discovers and registers messages from the calling assembly.
+            </summary>
+            <seealso cref="M:Tempest.MessageFactory.Discover(System.Reflection.Assembly)"/>
+        </member>
+        <member name="M:Tempest.MessageFactory.DiscoverFromAssemblyOf``1">
+            <summary>
+            Discovers and registers messages from the assembly of type <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">The type who's assembly to discover messages from.</typeparam>
+        </member>
+        <member name="M:Tempest.MessageFactory.Register(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.Type,System.Func{Tempest.Message}}})">
+            <summary>
+            Registers types with a method of construction.
+            </summary>
+            <param name="messageTypes">The types to register.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="messageTypes"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="messageTypes"/> contains non-implementations of <see cref="T:Tempest.Message"/>
+            or <paramref name="messageTypes"/> contains duplicate <see cref="P:Tempest.Message.MessageType"/>s.</exception>
+        </member>
+        <member name="M:Tempest.MessageFactory.Register(System.Collections.Generic.IEnumerable{System.Type})">
+            <summary>
+            Registers <paramref name="messageTypes"/> with their parameter-less constructor.
+            </summary>
+            <param name="messageTypes">The types to register.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="messageTypes"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="messageTypes"/> contains a type that is not an implementation of <see cref="T:Tempest.Message"/>,
+            has no parameter-less constructor or contains duplicate <see cref="P:Tempest.Message.MessageType"/>s.
+            </exception>
+        </member>
+        <member name="M:Tempest.MessageFactory.Create(System.UInt16)">
+            <summary>
+            Creates a new instance of the <paramref name="messageType"/>.
+            </summary>
+            <param name="messageType">The unique message identifier in the protocol for the desired message.</param>
+            <returns>A new instance of the <paramref name="messageType"/>, or <c>null</c> if this type has not been registered.</returns>
+        </member>
+        <member name="M:Tempest.Protocol.#ctor(System.Byte)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Tempest.Protocol"/> class.
+            </summary>
+            <param name="id">The ID of the protocol.</param>
+            <exception cref="T:System.ArgumentException"><paramref name="id"/> is 1.</exception>
+            <remarks>
+            Protocol ID 1 is reserved for internal Tempest use.
+            </remarks>
+        </member>
+        <member name="M:Tempest.Protocol.#ctor(System.Byte,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Tempest.Protocol"/> class.
+            </summary>
+            <param name="id">The ID of the protocol.</param>
+            <param name="version">The version of the protocol.</param>
+            <exception cref="T:System.ArgumentException"><paramref name="id"/> is 1.</exception>
+            <remarks>
+            Protocol ID 1 is reserved for internal Tempest use.
+            </remarks>
+        </member>
+        <member name="M:Tempest.Protocol.#ctor(System.Byte,System.Int32,System.Int32[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Tempest.Protocol"/> class.
+            </summary>
+            <param name="id">The ID of the protocol.</param>
+            <param name="version">The version of the protocol.</param>
+            <param name="compatibleVersions">Versions of this protcol that are compatible with this version.</param>
+            <exception cref="T:System.ArgumentException"><paramref name="id"/> is 1.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="compatibleVersions"/> is <c>null</c></exception>
+            <remarks>
+            Protocol ID 1 is reserved for internal Tempest use.
+            </remarks>
+        </member>
+        <member name="M:Tempest.Protocol.CompatibleWith(System.Int32)">
+            <summary>
+            Gets whether <paramref name="versionToCheck"/> is compatible with this version.
+            </summary>
+            <param name="versionToCheck">The version to check against this version.</param>
+            <returns><c>true</c> if compatible, <c>false</c> if not.</returns>
+        </member>
+        <member name="M:Tempest.Protocol.CompatibleWith(Tempest.Protocol)">
+            <summary>
+            Gets whether <paramref name="protocol"/> is compatible with this version.
+            </summary>
+            <param name="protocol">The protocol to check against this version.</param>
+            <returns><c>true</c> if compatible, <c>false</c> if not.</returns>
+        </member>
+        <member name="M:Tempest.Protocol.IsSameProtocolAs(Tempest.Protocol)">
+            <summary>
+            Gets whether <paramref name="protocol" /> is the same protocol (ignoring version).
+            </summary>
+            <param name="protocol">Protocl to check.</param>
+            <returns><c>true</c> if the protocol id's match, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="F:Tempest.Protocol.compatible">
+            <remarks>WP7 doesn't have HashSet.</remarks>
+        </member>
+        <member name="P:Tempest.Protocol.Version">
+            <summary>
+            Gets the version of this protocol.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadBool">
+            <summary>
+            Reads a boolean from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadBytes">
+            <summary>
+            Reads an array of unsigned bytes from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadBytes(System.Int32)">
+            <summary>
+            Reads the next <paramref name="count"/> bytes from the transport.
+            </summary>
+            <param name="count">The number of bytes to read.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="count"/> is &lt; 0.</exception>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadSByte">
+            <summary>
+            Reads a signed byte (SByte) from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadInt16">
+            <summary>
+            Reads a signed short (Int16) from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadInt32">
+            <summary>
+            Reads a signed integer (Int32) from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadInt64">
+            <summary>
+            Reads a signed long (Int64) from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadByte">
+            <summary>
+            Reads an unsigned byte (Byte) from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadUInt16">
+            <summary>
+            Reads an unsigned integer (UInt16) from the transport.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadUInt32">
+            <summary>
+            Reads an unsigned integer (UInt32) from the transport.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadUInt64">
+            <summary>
+            Reads an unsigned long (UInt64) from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadDecimal">
+            <summary>
+            Reads a decimal from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadSingle">
+            <summary>
+            Reads a single from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadDouble">
+            <summary>
+            Reads a double from the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueReader.ReadString(System.Text.Encoding)">
+            <summary>
+            Reads a string with <paramref name="encoding"/> from the transport.
+            </summary>
+            <param name="encoding">The encoding of the string.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="encoding"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.IValueReader.Flush">
+            <summary>
+            Finalizes buffer.
+            </summary>
+            <remarks>Connection providers should call this automatically when <see cref="M:Tempest.Message.ReadPayload(Tempest.ISerializationContext,Tempest.IValueReader)"/> returns.</remarks>
+        </member>
+        <member name="P:Tempest.BufferValueReader.Buffer">
+            <summary>
+            Gets the underlying buffer.
+            </summary>
+        </member>
+        <member name="P:Tempest.BufferValueReader.Position">
+            <summary>
+            Gets or sets the position of the reader in the buffer.
+            </summary>
+        </member>
+        <member name="T:Tempest.IValueWriter">
+            <summary>
+            Serialization contract.
+            </summary>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteByte(System.Byte)">
+            <summary>
+            Writes an unsigned byte to the transport.
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteSByte(System.SByte)">
+            <summary>
+            Writes a signed byte to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteBool(System.Boolean)">
+            <summary>
+            Writes a boolean to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+            <returns><paramref name="value"/></returns>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteBytes(System.Byte[])">
+            <summary>
+            Writes an array of unsigned bytes to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteBytes(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes an array segment to the transport.
+            </summary>
+            <param name="value">The array to write from.</param>
+            <param name="offset">The offset of <paramref name="value"/> to start writing from.</param>
+            <param name="length">The length to write from <paramref name="offset"/> in <paramref name="value"/>.</param>
+            
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteInt16(System.Int16)">
+            <summary>
+            Writes a signed short (Int16) to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteInt32(System.Int32)">
+            <summary>
+            Writes a signed integer (Int32) to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteInt64(System.Int64)">
+            <summary>
+            Writes a signed long (Int64) to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteUInt16(System.UInt16)">
+            <summary>
+            Writes an unsigned short to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteUInt32(System.UInt32)">
+            <summary>
+            Writes an unsigned integer to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteUInt64(System.UInt64)">
+            <summary>
+            Writes an unsigned long to the transport.
+            </summary>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteDecimal(System.Decimal)">
+            <summary>
+            Writes a decimal to the transport.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteSingle(System.Single)">
+            <summary>
+            Writes a single to the transport.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteDouble(System.Double)">
+            <summary>
+            Writes a double to the transport.
+            </summary>
+            <param name="value">The value to write</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.WriteString(System.Text.Encoding,System.String)">
+            <summary>
+            Writes a string with <paramref name="encoding"/> to the transport.
+            </summary>
+            <param name="encoding">The encoding to use.</param>
+            <param name="value">The value to write.</param>
+        </member>
+        <member name="M:Tempest.IValueWriter.Flush">
+            <summary>
+            Flushes any buffered data to the transport.
+            </summary>
+        </member>
+        <member name="M:Tempest.BufferValueWriter.Extend(System.Int32)">
+            <summary>
+            Adjusts the length by <paramref name="bytes"/>
+            </summary>
+            <param name="bytes">The number of bytes to shift the <see cref="P:Tempest.BufferValueWriter.Length"/> by.</param>
+        </member>
+        <member name="T:Tempest.TempestClient">
+            <summary>
+            Tempest clients.
+            </summary>
+        </member>
+        <member name="M:Tempest.TempestClient.ConnectAsync(Tempest.Target)">
+            <summary>
+            Attempts to asynchronously connect to <paramref name="target"/>.
+            </summary>
+            <param name="target">The target to connect to.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="target"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.TempestClient.DisconnectAsync">
+            <summary>
+            Disconnects from the server.
+            </summary>
+        </member>
+        <member name="E:Tempest.TempestClient.Connected">
+            <summary>
+            Raised when the client connects.
+            </summary>
+        </member>
+        <member name="E:Tempest.TempestClient.Disconnected">
+            <summary>
+            Raised with the client is disconnected.
+            </summary>
+        </member>
+        <member name="P:Tempest.TempestClient.IsConnected">
+            <summary>
+            Gets whether the client is currently connected or not.
+            </summary>
+        </member>
+        <member name="P:Tempest.ClientDisconnectedEventArgs.Requested">
+            <summary>
+            Gets whether the disconnection was requested by LocalClient.
+            </summary>
+        </member>
+        <member name="M:Tempest.SerializerExtensions.WriteDate(Tempest.IValueWriter,System.DateTime)">
+            <summary>
+            Writes a date value.
+            </summary>
+        </member>
+        <member name="M:Tempest.SerializerExtensions.ReadDate(Tempest.IValueReader)">
+            <summary>
+            Reads a date value.
+            </summary>
+        </member>
+        <member name="T:Tempest.ClientConnectionResult">
+            <summary>
+            Holds data for <see cref="M:Tempest.IClientConnection.ConnectAsync(Tempest.Target,Tempest.MessageTypes)"/> results.
+            </summary>
+        </member>
+        <member name="M:Tempest.ClientConnectionResult.#ctor(Tempest.ConnectionResult,Tempest.RSAAsymmetricKey)">
+            <summary>
+            Constructs and initializes a new instance of the <see cref="T:Tempest.ClientConnectionResult"/> class.
+            </summary>
+            <param name="result">The result of the connection attempt.</param>
+            <param name="publicKey">The server's public authentication key, if it has one.</param>
+        </member>
+        <member name="P:Tempest.ClientConnectionResult.Result">
+            <summary>
+            Gets the connection result.
+            </summary>
+        </member>
+        <member name="P:Tempest.ClientConnectionResult.ServerPublicKey">
+            <summary>
+            Gets the server's public authentication key, if encryption or authentication enabled.
+            </summary>
+        </member>
+        <member name="T:Tempest.ClientConnectedEventArgs">
+            <summary>
+            Holds data for the <see cref="E:Tempest.IClientConnection.Connected"/> event.
+            </summary>
+        </member>
+        <member name="T:Tempest.ClientConnectionEventArgs">
+            <summary>
+            Holds data for client-connection based events.
+            </summary>
+        </member>
+        <member name="M:Tempest.ClientConnectionEventArgs.#ctor(Tempest.IClientConnection)">
+            <summary>
+            Creates a new instance of the <see cref="T:Tempest.ClientConnectionEventArgs"/> class.
+            </summary>
+            <param name="connection">The connection for the event.</param>
+        </member>
+        <member name="P:Tempest.ClientConnectionEventArgs.Connection">
+            <summary>
+            Gets the connection for the event.
+            </summary>
+        </member>
+        <member name="M:Tempest.ClientConnectedEventArgs.#ctor(Tempest.IClientConnection,Tempest.RSAAsymmetricKey)">
+            <summary>
+            Creates a new instance of the <see cref="T:Tempest.ClientConnectedEventArgs"/> class.
+            </summary>
+            <param name="connection">The connection for the event.</param>
+            <param name="publicKey">The server's public authentication key, if it has one.</param>
+        </member>
+        <member name="P:Tempest.ClientConnectedEventArgs.ServerPublicKey">
+            <summary>
+            Gets the server's public authentication key, if encryption or authentication enabled.
+            </summary>
+        </member>
+        <member name="T:Tempest.ConnectionResult">
+            <summary>
+            Reasons for disconnection.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.FailedUnknown">
+            <summary>
+            Connection lost or killed for an unknown reason.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.Success">
+            <summary>
+            Connection succeeded.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.ConnectionFailed">
+            <summary>
+            The connection failed to connect to begin with.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.IncompatibleVersion">
+            <summary>
+            The server does not support the client's version of the protocol.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.FailedHandshake">
+            <summary>
+            The client failed during the handshake.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.MessageAuthenticationFailed">
+            <summary>
+            A signed message failed verification.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.EncryptionMismatch">
+            <summary>
+            An encrypted message failed decryption.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.Custom">
+            <summary>
+            An application specified result.
+            </summary>
+        </member>
+        <member name="F:Tempest.ConnectionResult.TimedOut">
+            <summary>
+            The connection timed out.
+            </summary>
+        </member>
+        <member name="T:Tempest.MessageEventArgs">
+            <summary>
+            Holds event data for the <see cref="E:Tempest.IConnection.MessageReceived"/> event.
+            </summary>
+        </member>
+        <member name="M:Tempest.MessageEventArgs.#ctor(Tempest.IConnection,Tempest.Message)">
+            <summary>
+            Creates a new instance of <see cref="T:Tempest.MessageEventArgs"/>.
+            </summary>
+            <param name="connection">The connection of the event.</param>
+            <param name="message">The message received.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="connection"/> or <paramref name="message"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Tempest.MessageEventArgs.Message">
+            <summary>
+            Gets the message received.
+            </summary>
+        </member>
+        <member name="F:Tempest.MessageTypes.Reliable">
+            <summary>
+            Reliable in-order delivery.
+            </summary>
+        </member>
+        <member name="F:Tempest.MessageTypes.Unreliable">
+            <summary>
+            Unreliable no-order-guarantee delivery.
+            </summary>
+        </member>
+        <member name="F:Tempest.MessageTypes.All">
+            <summary>
+            All message delivery types.
+            </summary>
+        </member>
+        <member name="T:Tempest.ConnectionMadeEventArgs">
+            <summary>
+            Provides data for the <see cref="E:Tempest.IConnectionProvider.ConnectionMade"/> event.
+            </summary>
+        </member>
+        <member name="M:Tempest.ConnectionMadeEventArgs.#ctor(Tempest.IServerConnection,Tempest.RSAAsymmetricKey)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Tempest.ConnectionMadeEventArgs"/> class.
+            </summary>
+            <param name="connection">The newly made connection.</param>
+            <param name="publicKey">The clients public authentication key.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="connection"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Tempest.ConnectionMadeEventArgs.ClientPublicKey">
+            <summary>
+            Gets the clients public authentication key, if present.
+            </summary>
+        </member>
+        <member name="P:Tempest.ConnectionMadeEventArgs.Connection">
+            <summary>
+            Gets the newly formed connection.
+            </summary>
+        </member>
+        <member name="P:Tempest.ConnectionMadeEventArgs.Rejected">
+            <summary>
+            Gets or sets whether to reject this connection.
+            </summary>
+        </member>
+        <member name="T:Tempest.ConnectionlessMessageEventArgs">
+            <summary>
+            Provides data for the <see cref="E:Tempest.IConnectionlessMessenger.ConnectionlessMessageReceived"/> event.
+            </summary>
+        </member>
+        <member name="M:Tempest.ConnectionlessMessageEventArgs.#ctor(Tempest.Message,Tempest.Target,Tempest.IConnectionlessMessenger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Tempest.ConnectionlessMessageEventArgs"/> class.
+            </summary>
+            <param name="message">The message that was received connectionlessly.</param>
+            <param name="from">The <see cref="T:Tempest.Target"/> the message came from.</param>
+            <param name="messenger">The <see cref="T:Tempest.IConnectionlessMessenger"/> the message was received from.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> or <paramref name="from"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Tempest.ConnectionlessMessageEventArgs.Message">
+            <summary>
+            Gets the received message.
+            </summary>
+        </member>
+        <member name="P:Tempest.ConnectionlessMessageEventArgs.From">
+            <summary>
+            Where the message came from.
+            </summary>
+        </member>
+        <member name="M:Tempest.ContextExtensions.RegisterMessageHandler``1(Tempest.IContext,System.Action{Tempest.MessageEventArgs{``0}})">
+            <summary>
+            Registers a message handler.
+            </summary>
+            <typeparam name="T">The message type.</typeparam>
+            <param name="self">The context to register the message handler to.</param>
+            <param name="handler">The message handler to register.</param>
+        </member>
+        <member name="T:Cadenza.Collections.MutableLookup`2">
+            <summary>
+            A mutable lookup implementing <see cref="T:System.Linq.ILookup`2"/>
+            </summary>
+            <typeparam name="TKey">The lookup key.</typeparam>
+            <typeparam name="TElement">The elements under each <typeparamref name="TKey"/>.</typeparam>
+        </member>
+        <member name="M:Cadenza.Collections.MutableLookup`2.Add(`0,`1)">
+            <summary>
+            Adds <paramref name="element"/> under the specified <paramref name="key"/>. <paramref name="key"/> does not need to exist.
+            </summary>
+            <param name="key">The key to add <paramref name="element"/> under.</param>
+            <param name="element">The element to add.</param>
+        </member>
+        <member name="M:Cadenza.Collections.MutableLookup`2.Remove(`0,`1)">
+            <summary>
+            Removes <paramref name="element"/> from the <paramref name="key"/>.
+            </summary>
+            <param name="key">The key that <paramref name="element"/> is located under.</param>
+            <param name="element">The element to remove from <paramref name="key"/>. </param>
+            <returns><c>true</c> if <paramref name="key"/> and <paramref name="element"/> existed, <c>false</c> if not.</returns>
+        </member>
+        <member name="M:Cadenza.Collections.MutableLookup`2.Remove(`0)">
+            <summary>
+            Removes <paramref name="key"/> from the lookup.
+            </summary>
+            <param name="key">They to remove.</param>
+            <returns><c>true</c> if <paramref name="key"/> existed.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="key"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Cadenza.Collections.MutableLookup`2.Contains(`0)">
+            <summary>
+            Gets whether or not there's a grouping for <paramref name="key"/>.
+            </summary>
+            <param name="key">The key to check for.</param>
+            <returns><c>true</c> if <paramref name="key"/> is present.</returns>
+        </member>
+        <member name="P:Cadenza.Collections.MutableLookup`2.Count">
+            <summary>
+            Gets the number of groupings.
+            </summary>
+        </member>
+        <member name="P:Cadenza.Collections.MutableLookup`2.Item(`0)">
+            <summary>
+            Gets the elements for <paramref name="key"/>.
+            </summary>
+            <param name="key">The key to get the elements for.</param>
+            <returns>The elements under <paramref name="key"/>.</returns>
+        </member>
+        <member name="M:Tempest.Providers.Network.NetworkConnection.AddProtocol(Tempest.Protocol)">
+            <summary>
+            Adds an accepted protocol to the connection
+            </summary>
+            <param name="protocol">The protocol to add.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="protocol"/> is <c>null</c>.</exception>
+            <exception cref="T:System.InvalidOperationException"><see cref="P:Tempest.Providers.Network.NetworkConnection.IsConnected"/> is <c>true</c>.</exception>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnection.SendBufferLimit">
+            <summary>
+            Gets or sets the global limit for number of send buffers (for both <see cref="T:Tempest.Providers.Network.NetworkServerConnection"/> and <see cref="T:Tempest.Providers.Network.NetworkClientConnection"/>).
+            (Default: <see cref="P:System.Environment.ProcessorCount"/>.)
+            </summary>
+            <remarks>
+            <para>
+            Can not be adjusted dynamically. If reduced below previous levels, it will prevent new buffers from being created.
+            However, it won't remove buffers past the limit that already existed.
+            </para>
+            <para>
+            You should consider <see cref="P:Tempest.Providers.Network.NetworkConnection.SendBufferLimit"/> * <see cref="P:Tempest.Providers.Network.NetworkConnection.MaxMessageSize"/> for memory usage potential.
+            </para>
+            </remarks>
+            <seealso cref="P:Tempest.Providers.Network.NetworkConnection.MaxMessageSize"/>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnection.AutoSizeSendBufferLimit">
+            <summary>
+            Gets or sets whether the global limit for number of send buffers should grow with additional connections. (Default: <c>true</c>).
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnection.AutoSizeFactor">
+            <summary>
+            Gets or sets the number of send buffers added per connection when <see cref="P:Tempest.Providers.Network.NetworkConnection.AutoSizeSendBufferLimit"/> is <c>true</c>.
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnection.MaxMessageSize">
+            <summary>
+            Gets or sets the maximum message size.
+            </summary>
+            <seealso cref="P:Tempest.Providers.Network.NetworkConnection.SendBufferLimit"/>
+            <remarks>
+            <para>
+            You should consider <see cref="P:Tempest.Providers.Network.NetworkConnection.MaxMessageSize"/> * <c>maxConnections</c> (<see cref="M:Tempest.Providers.Network.NetworkConnectionProvider.#ctor(Tempest.Protocol,Tempest.Target,System.Int32)"/>) for receive memory usage.
+            </para>
+            </remarks>
+        </member>
+        <member name="E:Tempest.Providers.Network.NetworkConnection.MessageReceived">
+            <summary>
+            Raised when a message is received.
+            </summary>
+        </member>
+        <member name="E:Tempest.Providers.Network.NetworkConnection.Disconnected">
+            <summary>
+            Raised when the connection is lost or manually disconnected.
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnection.BytesSent">
+            <summary>
+            Gets the total number of bytes sent in the lifetime of this connection.
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnection.BytesReceived">
+            <summary>
+            Gets the total number of bytes received in the lifetime of this connection.
+            </summary>
+        </member>
+        <member name="T:Tempest.Providers.Network.NetworkConnectionProvider">
+            <summary>
+            High performance socket based <see cref="T:Tempest.IConnectionProvider"/>.
+            </summary>
+            <remarks>
+            <para>
+            Potential memory usage is dependent on a number of parameters:
+            <list type="bullet">
+            	<item>
+            		<description>Each connection maintains a receive buffer with a size potential of <see cref="P:Tempest.Providers.Network.NetworkConnection.MaxMessageSize"/>.</description>
+            	</item>
+            	<item>
+            		<description><see cref="P:Tempest.Providers.Network.NetworkConnectionProvider.MaxConnections"/> (set from constructor) determines the max number of connections on the individual <see cref="T:Tempest.Providers.Network.NetworkConnectionProvider"/>.</description>
+            	</item>
+            	<item>
+            		<description><see cref="P:Tempest.Providers.Network.NetworkConnection.SendBufferLimit"/> determines how many send buffers (globally) can be created (both clients and servers both), with each having a size potential of <see cref="P:Tempest.Providers.Network.NetworkConnection.MaxMessageSize"/>.</description>
+            	</item>
+            </list>
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Tempest.Providers.Network.NetworkConnectionProvider.#ctor(Tempest.Protocol,Tempest.Target,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Tempest.Providers.Network.NetworkConnectionProvider"/> class.
+            </summary>
+            <param name="target">The target to listen to.</param>
+            <param name="maxConnections">Maximum number of connections to allow.</param>
+            <param name="protocol">The protocol to accept.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="target"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maxConnections"/> is &lt;= 0</exception>
+        </member>
+        <member name="M:Tempest.Providers.Network.NetworkConnectionProvider.#ctor(System.Collections.Generic.IEnumerable{Tempest.Protocol},Tempest.Target,System.Int32,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Tempest.Providers.Network.NetworkConnectionProvider"/> class.
+            </summary>
+            <param name="target">The target to listen to.</param>
+            <param name="maxConnections">Maximum number of connections to allow.</param>
+            <param name="protocols">The protocols to accept.</param>
+            <param name="enabledHashAlgs">
+            The signature hash algorithms (in order of preference) to enable.
+            <c>null</c> or an empty collection will enable all of the signature hash algorithms.
+            </param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="target"/> or <paramref name="protocols"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maxConnections"/> is &lt;= 0</exception>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnectionProvider.MaxConnections">
+            <summary>
+            Gets the maximum number of connections allowed on this provider.
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnectionProvider.Target">
+            <summary>
+            Gets the end point that this provider listens to for connections.
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnectionProvider.PublicAuthenticationKey">
+            <summary>
+            Gets the public authentication key for the server.
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnectionProvider.PublicEncryptionKey">
+            <summary>
+            Gets the public encryption key for the server.
+            </summary>
+        </member>
+        <member name="P:Tempest.Providers.Network.NetworkConnectionProvider.PingFrequency">
+            <summary>
+            Gets or sets the frequency (in milliseconds) that the server pings the client. 0 to disable.
+            </summary>
+        </member>
+        <member name="T:Tempest.ExecutionMode">
+            <summary>
+            Options for determining how messages are executed.
+            </summary>
+        </member>
+        <member name="F:Tempest.ExecutionMode.ConnectionOrder">
+            <summary>
+            Executes all message handlers independently, but in order per connection.
+            </summary>
+        </member>
+        <member name="F:Tempest.ExecutionMode.GlobalOrder">
+            <summary>
+            Executes all message handlers in order on a single thread.
+            </summary>
+        </member>
+        <member name="T:Tempest.TempestServer">
+            <summary>
+            Tempest servers.
+            </summary>
+        </member>
+        <member name="M:Tempest.TempestServer.AddConnectionProvider(Tempest.IConnectionProvider,Tempest.ExecutionMode)">
+            <summary>
+            Adds and starts the connection <paramref name="provider"/>.
+            </summary>
+            <param name="provider">The connection provider to add.</param>
+            <param name="mode">The <see cref="T:Tempest.ExecutionMode"/> for <paramref name="provider"/>.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="provider"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.TempestServer.RemoveConnectionProvider(Tempest.IConnectionProvider)">
+            <summary>
+            Stops and removes the connection <paramref name="provider"/>.
+            </summary>
+            <param name="provider">The connection provider to remove.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="provider"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.TempestServer.Start">
+            <summary>
+            Starts the server and all connection providers.
+            </summary>
+        </member>
+        <member name="M:Tempest.TempestServer.Stop">
+            <summary>
+            Stops the server and all connection providers.
+            </summary>
+        </member>
+        <member name="T:Tempest.InternalProtocol.TempestMessageType">
+            <summary>
+            Internal Tempest protocol message type.
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.Ping">
+            <summary>
+            Ping over reliable connections.
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.Pong">
+            <summary>
+            Pong over reliable connections.
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.Disconnect">
+            <summary>
+            Disconnect with reason.
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.Connect">
+            <summary>
+            ClientHello
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.Connected">
+            <summary>
+            ServerConnected
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.AcknowledgeConnect">
+            <summary>
+            ServerHello
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.FinalConnect">
+            <summary>
+            Client finalize connection
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.Acknowledge">
+            <summary>
+            Acknowledge message received.
+            </summary>
+        </member>
+        <member name="F:Tempest.InternalProtocol.TempestMessageType.Partial">
+            <summary>
+            Partial message received.
+            </summary>
+        </member>
+        <member name="M:Tempest.Timer.Start">
+            <summary>
+            Starts the timer.
+            </summary>
+        </member>
+        <member name="M:Tempest.Timer.Stop">
+            <summary>
+            Stops the timer.
+            </summary>
+        </member>
+        <member name="E:Tempest.Timer.TimesUp">
+            <summary>
+            Raised when <see cref="P:Tempest.Timer.Interval"/> has been reached by the timer.
+            </summary>
+            <seealso cref="P:Tempest.Timer.Interval"/>
+        </member>
+        <member name="P:Tempest.Timer.AutoReset">
+            <summary>
+            Gets or sets whether the timer should reset and start timing again automatically.
+            </summary>
+            <remarks>Defaults to <c>true</c>.</remarks>
+        </member>
+        <member name="P:Tempest.Timer.Interval">
+            <summary>
+            Gets or sets the time interval in milliseconds.
+            </summary>
+            <seealso cref="E:Tempest.Timer.TimesUp"/>
+        </member>
+        <member name="T:Tempest.TypeMap">
+            <summary>
+            Represents a map of <see cref="T:System.Type"/>s to identifiers for shorter bitstream references.
+            </summary>
+        </member>
+        <member name="M:Tempest.TypeMap.TryGetNewTypes(System.Collections.Generic.IList{System.Collections.Generic.KeyValuePair{System.Type,System.UInt16}}@)">
+            <summary>
+            Gets the <see cref="T:System.Type"/>s and their IDs that have been added since <see cref="M:Tempest.TypeMap.TryGetNewTypes(System.Collections.Generic.IList{System.Collections.Generic.KeyValuePair{System.Type,System.UInt16}}@)"/> was last called.
+            </summary>
+        </member>
+        <member name="M:Tempest.TypeMap.GetTypeId(System.Type,System.UInt16@)">
+            <summary>
+            Attempts to get the <paramref name="id"/> of the <paramref name="type"/>, or assigns a new one.
+            </summary>
+            <param name="type">The type to lookup the <paramref name="id"/> for.</param>
+            <param name="id">The id of the <paramref name="type"/>.</param>
+            <returns><c>true</c> if the type is new and needs to be transmitted, <c>false</c> otherwise.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Tempest.TypeMap.TryGetType(System.UInt16,System.Type@)">
+            <summary>
+            Attempts to get the <paramref name="type"/> for <paramref name="id"/>.
+            </summary>
+            <param name="id">The id to search for.</param>
+            <param name="type">The type, if found.</param>
+            <returns><c>true</c> if the type was found</returns>
+        </member>
+    </members>
+</doc>
